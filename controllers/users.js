@@ -3,17 +3,22 @@
  * Module dependencies.
  */
 
+/*
+* TODO - 1. Handle errors
+* */
+
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , utils = require('../utils/utils')
   , config = require('../config/config')
-    , emailer = require('../utils/emailer')
-    ;
+  , emailer = require('../utils/emailer')
+  ;
 
 var app_user = {};
 
 /**
  * Logout
+ * TODO - need to test login - logout with UI
  */
 
 exports.logout = function (req, res) {
@@ -29,6 +34,7 @@ exports.logout = function (req, res) {
 exports.create = function (req, res) {
   var user = new User(req.body)
   user.provider = 'local';
+  user.authenticateCode = new mongoose.Types.ObjectId;
   user.save(function (err) {
     if (err) {
       res.send('err : ' + err.message);
@@ -70,10 +76,9 @@ exports.user = function (req, res, next, id) {
 * */
 
 
-exports.UniqueIdUser = function(req, res, next, id){
-  console.log('in unique id user');
+exports.authenticateCodeUser = function(req, res, next, id){
   User
-      .findOne({name: id})
+      .findOne({authenticateCode: id})
       .exec(function(err, user){
        console.log('got user by unique id');
        if (err) return next(err)
@@ -91,7 +96,6 @@ exports.UniqueIdUser = function(req, res, next, id){
 exports.activateUser = function(req, res){
   console.log('in activate user');
   var user = req.profile;
-  console.log(user.name);
   user.active = true;
   user.save(function(err, users, noOfUpdates){
     if (err) throw err;

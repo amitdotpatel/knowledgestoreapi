@@ -6,10 +6,8 @@
 * */
 
  var mongoose = require('mongoose')
-
   , env = process.env.NODE_ENV || 'development'
   , config = require('../config/config')[env]
-
   , Schema = mongoose.Schema
   , utils = require('../utils/utils')
 
@@ -19,7 +17,7 @@
 
 var CoursesSchema = new Schema({
   title: {type : String, default : '', trim : true},
-  body: {type : String, default : '', trim : true},
+  summary: {type : String, default : '', trim : true},
   user: {type : Schema.ObjectId, ref : 'User'},
   vidLink : {type : String, default : ''},
   comments: [{
@@ -33,8 +31,15 @@ var CoursesSchema = new Schema({
   startDate  : {type : Date},
   endDate  : {type : Date},
   duration: {type: Number, default: 0},
+  preRequisite : {type: String},
+  category : {type: String},
+  authors : {type: []},
+  level : {type: Number},
+  rating : {type: Number},
   courseMaterial : [{
     day: {type: Number, default: 0},
+    section : {type: Number},
+    topic : {type: Number},
     title: {type : String, default : '', trim : true},
     vidLink: {type : String, default : ''},
     content: {type : String, default : '', trim : true}
@@ -49,9 +54,9 @@ CoursesSchema.path('title').validate(function (title) {
   return title.length > 0
 }, ' title cannot be blank')
 
-CoursesSchema.path('body').validate(function (body) {
-  return body.length > 0
-}, ' body cannot be blank')
+CoursesSchema.path('summary').validate(function (summary) {
+  return summary.length > 0
+}, ' summary cannot be blank')
 
 CoursesSchema.path('vidLink').validate(function(link){
   return (link == '') ? true : utils.validateVidLink(link)
@@ -97,7 +102,7 @@ CoursesSchema.statics = {
 
   load: function (id, cb) {
     this.findOne({ _id : id })
-      .populate('user', 'name email username')
+      .populate('user', 'email firstName lastName')
       .populate('comments.user')
       .exec(cb)
   },
@@ -116,7 +121,7 @@ CoursesSchema.statics = {
     var criteria = options.criteria || {}
 
     this.find(criteria)
-     .populate('user', 'name username')
+     .populate('user', 'firstName lastName')
      .sort({'createdAt': -1}) // sort by date
      .exec(cb)
   }

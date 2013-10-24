@@ -15,11 +15,11 @@ var mongoose = require('mongoose')
  */
 
 var UserSchema = new Schema({
-  name: { type: String, default: '' },
+  firstName: { type: String, default: '' },
+  lastName: { type: String, default: '' },
   email: { type: String, default: '' },
-  username: { type: String, default: '' },
   provider: { type: String, default: '' },
-  hashed_password: { type: String, default: '' },
+  hashed_password: { type: String, default: '' }, //hashed password
   salt: { type: String, default: '' },
   authToken: { type: String, default: '' },
   facebook: {},
@@ -27,7 +27,8 @@ var UserSchema = new Schema({
   github: {},
   google: {},
   userCourses : [{ CourseId: String, state: String}],
-  active : {type: Boolean, default: false}
+  active : {type: Boolean, default: false},
+  authenticateCode : {type: Schema.Types.ObjectId}
 })
 
 /**
@@ -53,11 +54,11 @@ var validatePresenceOf = function (value) {
 
 // the below 4 validations only apply if you are signing up traditionally
 
-UserSchema.path('name').validate(function (name) {
+UserSchema.path('firstName').validate(function (firstName) {
   // if you are authenticating by any of the oauth strategies, don't validate
   if (authTypes.indexOf(this.provider) !== -1) return true
-  return name.length
-}, 'Name cannot be blank')
+  return firstName.length
+}, 'first name cannot be blank')
 
 UserSchema.path('email').validate(function (email) {
   // if you are authenticating by any of the oauth strategies, don't validate
@@ -76,11 +77,11 @@ UserSchema.path('email').validate(function (email, fn) {
   } else fn(true)
 }, 'Email already exists')
 
-UserSchema.path('username').validate(function (username) {
+UserSchema.path('lastName').validate(function (lastName) {
   // if you are authenticating by any of the oauth strategies, don't validate
   if (authTypes.indexOf(this.provider) !== -1) return true
-  return username.length
-}, 'Username cannot be blank')
+  return lastName.length
+}, 'last name cannot be blank')
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
   // if you are authenticating by any of the oauth strategies, don't validate
@@ -170,7 +171,7 @@ UserSchema.methods = {
 
   encryptPassword: function (password) {
     if (!password) return ''
-    var encrypred
+    var encrypred;
     try {
       encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex')
       return encrypred

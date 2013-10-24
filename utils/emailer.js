@@ -2,6 +2,13 @@
  * Created by abhay on 23/10/13.
  */
 
+/*
+* some changes need to do run this
+*
+* TODO - 1. define constants in config and use those. e.g. link address, user, etc
+*
+* */
+
 var path = require('path')
     , swigEmaileTemplate = require('swig-email-templates')
     , nodemailer = require('nodemailer')
@@ -21,21 +28,18 @@ exports.sendEmail = function(user){
       render('authorizationEmail.html',
           {
               name:user.name,
-              link:"http://172.25.30.29:3000/users/activate/" + user.name
+              link:"http://172.25.30.29:3000/users/activate/" + user.authenticateCode
           },
 
-      function(err, resultHtml){
-
+        function(err, resultHtml){
           console.log(resultHtml);
-
           var smtpTransport = nodemailer.createTransport("SMTP",{
               service: "Gmail",
               auth: {
                   user: "abhay.joshi@synerzip.com",
-                  pass: "synerzip01"
+                  pass: "traditional2468" ///use your account plz :)
               }
           });
-
           // setup e-mail data with unicode symbols
           var mailOptions = {
               from: "abhay.joshi@synerzip.com", // sender address
@@ -44,8 +48,6 @@ exports.sendEmail = function(user){
               generateTextFromHTML: true,
               html: resultHtml // html body
           }
-
-
           smtpTransport.sendMail(mailOptions, function(error, response){
               if(error){
                   console.log(error);
@@ -55,22 +57,7 @@ exports.sendEmail = function(user){
 
               smtpTransport.close(); // shut down the connection pool, no more messages
           });
-
-
-      }
-
-
+        }
       )
-
-
-    }
-
-
-
-
-
-
-    )
-
-
+    })
 }
