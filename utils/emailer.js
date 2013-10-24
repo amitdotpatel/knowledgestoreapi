@@ -37,7 +37,7 @@ exports.sendEmail = function(user){
               service: "Gmail",
               auth: {
                   user: "abhay.joshi@synerzip.com",
-                  pass: "traditional2468" ///use your account plz :)
+                  pass: "XXXXXXXXXX" ///use your account plz :)
               }
           });
           // setup e-mail data with unicode symbols
