@@ -10,6 +10,14 @@ var path = require('path')
 module.exports = {
     development: {
       db: 'mongodb://localhost/kinoedu',
-      root: rootPath
+      root: rootPath,
+      serverURL : 'http://172.25.30.29:3000',
+      SMTPTransportDetails: {
+          service: "Gmail",
+          auth: {
+              user: "abhay.joshi@synerzip.com",
+              pass: "XXX" ///use your account plz :)
+          }
+      }
     }
 }

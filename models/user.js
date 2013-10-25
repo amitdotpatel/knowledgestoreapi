@@ -28,7 +28,10 @@ var UserSchema = new Schema({
   google: {},
   userCourses : [{ CourseId: String, state: String}],
   active : {type: Boolean, default: false},
-  authenticateCode : {type: Schema.Types.ObjectId}
+  activateCode : {type: Schema.Types.ObjectId},
+  activationCodeUsed : {type: Boolean},
+  createdBy: {type: Schema.Types.ObjectId}
+
 })
 
 /**

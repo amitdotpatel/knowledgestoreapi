@@ -34,7 +34,7 @@ exports.logout = function (req, res) {
 exports.create = function (req, res) {
   var user = new User(req.body)
   user.provider = 'local';
-  user.authenticateCode = new mongoose.Types.ObjectId;
+  user.activateCode = new mongoose.Types.ObjectId;
   user.save(function (err) {
     if (err) {
       res.send('err : ' + err.message);
@@ -76,9 +76,9 @@ exports.user = function (req, res, next, id) {
 * */
 
 
-exports.authenticateCodeUser = function(req, res, next, id){
+exports.activateCodeUser = function(req, res, next, id){
   User
-      .findOne({authenticateCode: id})
+      .findOne({activateCode: id})
       .exec(function(err, user){
        console.log('got user by unique id');
        if (err) return next(err)
@@ -96,10 +96,16 @@ exports.authenticateCodeUser = function(req, res, next, id){
 exports.activateUser = function(req, res){
   console.log('in activate user');
   var user = req.profile;
-  user.active = true;
-  user.save(function(err, users, noOfUpdates){
-    if (err) throw err;
-     console.log('activated successfully');
-     res.send('activation successful');
-  })
+  if(user.activationCodeUsed){
+    return res.send('Sorry. This activation code has already been used.');
+  }
+  else{
+      user.active = true;
+      user.activationCodeUsed = true;
+      user.save(function(err, users, noOfUpdates){
+          if (err) throw err;
+          console.log('activated successfully');
+          res.send('activation successful');
+      })
+  }
 }

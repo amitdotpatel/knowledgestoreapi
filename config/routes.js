@@ -26,7 +26,7 @@ module.exports = function(app, passport){
     app.get('/users/:userId', users.getUser);
     app.get('/users/activate/:uniqueUserId', users.activateUser);
     app.param('userId', users.user);
-    app.param('uniqueUserId', users.authenticateCodeUser);
+    app.param('uniqueUserId', users.activateCodeUser);
 
     //course APIs
     app.get('/courses', courses.index)
