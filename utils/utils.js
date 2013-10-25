@@ -12,17 +12,15 @@ exports.validateVidLink = function (link){
     return false;
   }
 
-//  var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-//  result = (link.match(p)) ? true : false;
+  var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  result = (link.match(p)) ? true : false;
 
   return result;
 }
 
 
 /**
- *
  * Create the endDate of course by adding duration days into start date.
- *
  */
 exports.createEndDate = function(startDate,duration){
     var a = new Date();

@@ -6,8 +6,7 @@
 var path = require('path')
     , swigEmaileTemplate = require('swig-email-templates')
     , nodemailer = require('nodemailer')
-    , env = process.env.NODE_ENV || 'development'
-    , config = require('../config/config')[env]
+    , config = require('../config/config')[process.env.NODE_ENV]
     ;
 
 var cannotBlankErrMsg = 'can not be blank while sending email';

@@ -57,13 +57,7 @@ exports.load = function(req, res, next, id){
  */
 
 exports.index = function(req, res){
-    console.log('in index');
-  var sysDate = new Date();
-  sysDate.setHours(0,0,0,0);
   var options = {}
-    //criteria: {}//{$or : [{endDate: {$gte : sysDate}}, {user:req.user}]}
-
-
   Courses.list(options, function(err, courses) {
     if (err) {
        console.log(err.message);
@@ -81,9 +75,6 @@ exports.index = function(req, res){
 * user's enrolled courses only
 * */
 exports.userCourses = function (req, res){
-    var sysDate = new Date();
-    sysDate.setHours(0,0,0,0);
-    var self = this;
     var options = {};
     try{
         Users.findById(req.user._id, function(err, user){
@@ -100,8 +91,6 @@ exports.userCourses = function (req, res){
                 var ObjectId = require('mongoose').Types.ObjectId;
                 CurrentUserCourses = CurrentUserCourses.map(function(id) { return ObjectId(id); });
                 options.criteria = {_id: {$in: CurrentUserCourses}};
-
-
                 Courses.list(options, function(err, courses) {
                   res.send(JSON.stringify(courses));
                 })
@@ -122,6 +111,8 @@ exports.userCourses = function (req, res){
 exports.create = function (req, res) {
   var course = new Courses(req.body)
   course.user = req.user;
+
+  /* TODO - need to check req body before uploading */
 
   var self = this;
               if(course.duration){
@@ -162,7 +153,7 @@ exports.update = function(req, res){
  * get particular course
  */
 
-exports.getCourse = function(req, res){
+exports.get = function(req, res){
 
     console.log(' in getCourse ');
     var course = req.course;
@@ -174,20 +165,20 @@ exports.getCourse = function(req, res){
  * Delete an article
  */
 
-exports.deleteCourse = function(req, res){
+exports.delete = function(req, res){
   console.log('req.course = '+req.course);
   var course = req.course
   course.remove(function(err){
 
       //not sure about below syntax
-    res.redirect('/courses');
+    res.send('deleted successfully');
 
   })
 }
 
 
 /*
-* unused functionality below
+* unused functionality below  ----- for future use
 *
 * */
 

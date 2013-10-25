@@ -32,8 +32,16 @@ exports.logout = function (req, res) {
  */
 
 exports.create = function (req, res) {
-  var user = new User(req.body)
+  var user = new User(req.body);
+  user.active = false;
+  if ((user.hashed_password.length > 0) && (!user.password)){
+    user.password = user.hashed_password;
+  }
   user.provider = 'local';
+  /*
+  * TODO - with below approach activatecode and _id differs only by 1 digit
+  * need to make it random
+  * */
   user.activateCode = new mongoose.Types.ObjectId;
   user.save(function (err) {
     if (err) {
@@ -50,7 +58,7 @@ exports.create = function (req, res) {
  *  Show profile
  */
 
-exports.getUser = function (req, res) {
+exports.get = function (req, res) {
   var user = req.profile;
   res.send(user.toJSON());
 }
@@ -93,7 +101,7 @@ exports.activateCodeUser = function(req, res, next, id){
 * activate user
 * */
 
-exports.activateUser = function(req, res){
+exports.activate = function(req, res){
   console.log('in activate user');
   var user = req.profile;
   if(user.activationCodeUsed){

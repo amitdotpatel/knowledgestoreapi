@@ -6,8 +6,7 @@
 * */
 
  var mongoose = require('mongoose')
-  , env = process.env.NODE_ENV || 'development'
-  , config = require('../config/config')[env]
+  , config = require('../config/config')[process.env.NODE_ENV]
   , Schema = mongoose.Schema
   , utils = require('../utils/utils')
 
@@ -72,18 +71,12 @@ CoursesSchema.path('startDate').validate(function(startDate){
  */
 
 CoursesSchema.methods = {
-
-  /**
-   * Save course and upload
-   *
-   */
-
+  /*
+  * TODO - implement images
+  * */
   uploadAndSave: function (course, cb) {
-
     return this.save(cb)
-
   }
-
 }
 
 /**
@@ -94,10 +87,6 @@ CoursesSchema.statics = {
 
   /**
    * Find course by id
-   *
-   * @param {ObjectId} id
-   * @param {Function} cb
-   * @api private
    */
 
   load: function (id, cb) {
@@ -109,10 +98,6 @@ CoursesSchema.statics = {
 
   /**
    * List courses
-   *
-   * @param {Object} options
-   * @param {Function} cb
-   * @api private
    */
 
   list: function (options, cb) {

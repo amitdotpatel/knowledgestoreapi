@@ -20,7 +20,6 @@ module.exports = function(app, config, express, passport){
         secret: 'kino',
         store: new mongoStore({
             url : config.db
-            //'mongodb://localhost/kinoedu'//
             , 'collection' : 'sessions'
         })
     }))
@@ -34,8 +33,8 @@ module.exports = function(app, config, express, passport){
     app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
-    if ('development' == app.get('env')) {
+    // development only
+    if ('development' == process.env.NODE_ENV) {
         app.use(express.errorHandler());
     }
 

@@ -143,10 +143,6 @@ UserSchema.methods = {
 
   /**
    * Authenticate - check if the passwords are the same
-   *
-   * @param {String} plainText
-   * @return {Boolean}
-   * @api public
    */
 
   authenticate: function (plainText) {
@@ -155,9 +151,6 @@ UserSchema.methods = {
 
   /**
    * Make salt
-   *
-   * @return {String}
-   * @api public
    */
 
   makeSalt: function () {
@@ -166,10 +159,6 @@ UserSchema.methods = {
 
   /**
    * Encrypt password
-   *
-   * @param {String} password
-   * @return {String}
-   * @api public
    */
 
   encryptPassword: function (password) {

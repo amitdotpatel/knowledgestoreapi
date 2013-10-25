@@ -12,7 +12,7 @@ module.exports = function(app, passport){
     //home APIs
     app.get('/', home.index);
 
-   //Authentication
+   //Authentication - TODO - need to handle messages properly - particularly failure message
     app.post('/users/session',
         passport.authenticate('local'), function(req, res){
             res.send('validated locally');
@@ -23,8 +23,8 @@ module.exports = function(app, passport){
     app.post('/logout', users.logout);
 
     app.post('/users', users.create);
-    app.get('/users/:userId', users.getUser);
-    app.get('/users/activate/:uniqueUserId', users.activateUser);
+    app.get('/users/:userId', users.get);
+    app.get('/users/activate/:uniqueUserId', users.activate);
     app.param('userId', users.user);
     app.param('uniqueUserId', users.activateCodeUser);
 
@@ -32,9 +32,9 @@ module.exports = function(app, passport){
     app.get('/courses', courses.index)
     app.get('/courses/my', courseAuth, courses.userCourses)
     app.post('/courses', courseAuth, courses.create)
-    app.get('/courses/:courseID', courseAuth, courses.getCourse)
+    app.get('/courses/:courseID', courseAuth, courses.get)
     app.put('/courses/:courseID', editCourseAuth, courses.update)
-    app.del('/courses/:courseID', editCourseAuth, courses.deleteCourse)
+    app.del('/courses/:courseID', editCourseAuth, courses.delete)
     app.get('/courseMaterial/:courseID/byDay', courseAuth, courses.loadCourseMaterialByDay)
     app.param('courseID', courses.load)
 
