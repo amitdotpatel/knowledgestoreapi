@@ -17,7 +17,7 @@ Routes :
     post : '/users/logIn', use : login user, params : email, password, output : String result
     post : '/logOut', use : log out the session
     post : '/users/signUp', use : sign up, params : email, password, firstName, lastName, etc, output : String result
-    get : '/users/:userId', use - get particular user 
+    get : '/users/:userId', use : get particular user 
 
     get : '/courses', use : list of courses, output - JSON array
     get : '/courses/my', use : user specific courses, output - JSON array
