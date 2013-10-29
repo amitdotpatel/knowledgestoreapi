@@ -13,7 +13,7 @@ module.exports = {
           service: "Gmail",
           auth: {
               user: "abhay.joshi@synerzip.com",
-              pass: "nodejsrocks" ///use your account plz :)
+              pass: "XXXXXX" ///use your account plz :)
           }
       }
     }
