@@ -13,16 +13,16 @@ module.exports = function(app, passport){
     app.get('/', home.index);
 
    //Authentication - TODO - need to handle messages properly - particularly failure message
-    app.post('/users/session',
+    app.post('/users/logIn',
         passport.authenticate('local'), function(req, res){
             res.send('validated locally');
         });
 
 
     //user APIs
-    app.post('/logout', users.logout);
+    app.post('/logOut', users.logout);
 
-    app.post('/users', users.create);
+    app.post('/users/signUp', users.create);
     app.get('/users/:userId', users.get);
     app.get('/users/activate/:uniqueUserId', users.activate);
     app.param('userId', users.user);

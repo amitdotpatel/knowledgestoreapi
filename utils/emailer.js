@@ -30,6 +30,9 @@ exports.sendEmail = function(user){
           },
 
         function(err, resultHtml){
+
+          console.log(resultHtml);
+
           var smtpTransport = nodemailer.createTransport("SMTP", config.SMTPTransportDetails);
 
           var mailOptions = {
