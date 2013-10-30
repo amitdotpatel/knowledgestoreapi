@@ -13,29 +13,29 @@ module.exports = function(app, passport){
     app.get('/', home.index);
 
    //Authentication - TODO - need to handle messages properly - particularly failure message
-    app.post('/users/logIn',
+    app.post('/api/users/logIn',
         passport.authenticate('local'), function(req, res){
             res.send('validated locally');
         });
 
 
     //user APIs
-    app.post('/logOut', users.logout);
+    app.post('/api/logOut', users.logout);
 
-    app.post('/users/signUp', users.create);
-    app.get('/users/:userId', users.get);
-    app.get('/users/activate/:uniqueUserId', users.activate);
+    app.post('/api/users/signUp', users.create);
+    app.get('/api/users/:userId', users.get);
+    app.get('/api/users/activate/:uniqueUserId', users.activate);
     app.param('userId', users.user);
     app.param('uniqueUserId', users.activateCodeUser);
 
     //course APIs
-    app.get('/courses', courses.index)
-    app.get('/courses/my', courseAuth, courses.userCourses)
-    app.post('/courses', courseAuth, courses.create)
-    app.get('/courses/:courseID', courseAuth, courses.get)
-    app.put('/courses/:courseID', editCourseAuth, courses.update)
-    app.del('/courses/:courseID', editCourseAuth, courses.delete)
-    app.get('/courseMaterial/:courseID/byDay', courseAuth, courses.loadCourseMaterialByDay)
+    app.get('/api/courses', courses.index)
+    app.get('/api/courses/my', courseAuth, courses.userCourses)
+    app.post('/api/courses', courseAuth, courses.create)
+    app.get('/api/courses/:courseID', courseAuth, courses.get)
+    app.put('/api/courses/:courseID', editCourseAuth, courses.update)
+    app.del('/api/courses/:courseID', editCourseAuth, courses.delete)
+    app.get('/api/courseMaterial/:courseID/byDay', courseAuth, courses.loadCourseMaterialByDay)
     app.param('courseID', courses.load)
 
 }
