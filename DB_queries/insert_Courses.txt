@@ -1,0 +1,74 @@
+//shift db
+use kinoedu;
+
+//create a dummy user
+
+//delete the user if already there
+
+db.users.remove({email:'kinoedusynerziptest@gmail.com'});
+
+//insert the user
+db.users.insert({
+  firstName: 'testUserDummy1',
+  lastName: 'lastNameDummy1',
+  email: 'kinoedusynerziptest@gmail.com',
+  provider: 'local',
+  hashed_password: 'f4d5c8dc023123318127b9b6933e7b4b5c7c6c9f',
+  salt: '825718611468',
+  active : true
+});
+
+
+
+//empty the courses table
+db.courses.remove({});
+
+var vidLinks = ['http://www.youtube.com/watch?v=hNAHogdcus0', 'http://www.youtube.com/watch?v=bW6Y_CBQJNI'];
+var user = db.users.find({email:'kinoedusynerziptest@gmail.com'}, {_id:1}).next();
+
+for(var i=1; i<6; i++){
+db.courses.insert({
+  title: 'test' + i,
+  summary: 'summary of a test ' + i + ' course',
+  user: user._id,
+  vidLink : vidLinks[i%2],
+  comments: [{
+    body: 'comment1'
+  }],
+  tags: ['tag1', 'tag2', 'tag3'],
+  preRequisite : 'preRequisite1, preRequisite2',
+  category : 'category',
+  authors : ['author1,author2'],
+  level : 1,
+  rating : 1,
+  courseMaterial : [{
+    day: 1,
+    section : 1,
+    topic : 1,
+    title: 'section1topic1',
+    vidLink: 'http://www.youtube.com/watch?v=i9MHigUZKEM',
+    content: 'content1'
+  }, {
+    day: 1,
+    section : 1,
+    topic : 2,
+    title: 'section1topic2',
+    vidLink: 'http://www.youtube.com/watch?v=bW6Y_CBQJNI',
+    content: 'content1'
+  }, {
+    day: 1,
+    section : 2,
+    topic : 1,
+    title: 'section2topic1',
+    vidLink: 'http://www.youtube.com/watch?v=i9MHigUZKEM',
+    content: 'content1'
+  },{
+    day: 1,
+    section : 2,
+    topic : 2,
+    title: 'section2topic2',
+    vidLink: 'http://www.youtube.com/watch?v=bW6Y_CBQJNI',
+    content: 'content1'
+  }]
+});
+}
