@@ -12,6 +12,7 @@
 
 /**
  * Course Schema
+ * TODO - put defaults whenever applicable
  */
 
 var CoursesSchema = new Schema({

@@ -15,6 +15,8 @@ module.exports = {
               user: "kinoedusynerziptest",
               pass: "kinoedutest" ///use your account plz :)
           }
-      }
+      },
+      statusCode_Success : 0,
+      statusCode_Fail : 1
     }
 }

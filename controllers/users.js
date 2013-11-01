@@ -10,7 +10,7 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , utils = require('../utils/utils')
-  , config = require('../config/config')
+  , config = require('../config/config')[process.env.NODE_ENV]
   , emailer = require('../utils/emailer')
   ;
 
@@ -22,8 +22,24 @@ var app_user = {};
  */
 
 exports.logout = function (req, res) {
-  req.logout()
-  res.send('logged out successfully.');
+  req.logout();
+  var data = {
+        status: config.statusCode_Success,
+        code : 'logged out successfully'
+  };
+  res.send(data);
+}
+
+/*
+* handle successful authentication
+* */
+exports.HandleSuccessfulLogin = function(req, res){
+    var data = {
+        statusCode: config.statusCode_Success
+        , msg : 'validated locally'
+    };
+    res.send(data);
+//    res.send(JSON.stringify(data));
 }
 
 
@@ -45,11 +61,20 @@ exports.create = function (req, res) {
   user.activateCode = new mongoose.Types.ObjectId;
   user.save(function (err) {
     if (err) {
-      res.send('err : ' + err.message);
+        var data = {
+            statusCode: config.statusCode_Fail,
+            msg : err.message,
+            msgData : err
+        };
+        res.send(data);
     }
     else{
-      res.send('created successfully');
-      emailer.sendEmail(user);
+        var data = {
+            statusCode: config.statusCode_Success,
+            code : 'created successfully'
+        };
+        res.send(data);
+        emailer.sendEmail(user);
     }
   })
 }

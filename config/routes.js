@@ -14,9 +14,7 @@ module.exports = function(app, passport){
 
    //Authentication - TODO - need to handle messages properly - particularly failure message
     app.post('/users/logIn',
-        passport.authenticate('local'), function(req, res){
-            res.send('validated locally');
-        });
+        passport.authenticate('local'), users.HandleSuccessfulLogin);
 
 
     //user APIs
