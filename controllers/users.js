@@ -23,23 +23,14 @@ var app_user = {};
 
 exports.logout = function (req, res) {
   req.logout();
-  var data = {
-        status: config.statusCode_Success,
-        code : 'logged out successfully'
-  };
-  res.send(data);
+  res.send('logged out successfully');
 }
 
 /*
 * handle successful authentication
 * */
 exports.HandleSuccessfulLogin = function(req, res){
-    var data = {
-        statusCode: config.statusCode_Success
-        , msg : 'validated locally'
-    };
-    res.send(data);
-//    res.send(JSON.stringify(data));
+    res.send('Login successful ');
 }
 
 
@@ -61,19 +52,10 @@ exports.create = function (req, res) {
   user.activateCode = new mongoose.Types.ObjectId;
   user.save(function (err) {
     if (err) {
-        var data = {
-            statusCode: config.statusCode_Fail,
-            msg : err.message,
-            msgData : err
-        };
-        res.send(data);
+        res.send(400, err);
     }
     else{
-        var data = {
-            statusCode: config.statusCode_Success,
-            code : 'created successfully'
-        };
-        res.send(data);
+        res.send('created successfully');
         emailer.sendEmail(user);
     }
   })

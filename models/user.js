@@ -61,7 +61,7 @@ UserSchema.path('firstName').validate(function (firstName) {
   // if you are authenticating by any of the oauth strategies, don't validate
   if (authTypes.indexOf(this.provider) !== -1) return true
   return firstName.length
-}, 'first name cannot be blank')
+}, 'First Name cannot be blank')
 
 UserSchema.path('email').validate(function (email) {
   // if you are authenticating by any of the oauth strategies, don't validate
@@ -84,7 +84,7 @@ UserSchema.path('lastName').validate(function (lastName) {
   // if you are authenticating by any of the oauth strategies, don't validate
   if (authTypes.indexOf(this.provider) !== -1) return true
   return lastName.length
-}, 'last name cannot be blank')
+}, 'Last Name cannot be blank')
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
   // if you are authenticating by any of the oauth strategies, don't validate
