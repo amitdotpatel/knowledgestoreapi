@@ -11,7 +11,7 @@ var path = require('path')
 
 var cannotBlankErrMsg = 'can not be blank while sending email';
 
-exports.sendEmail = function(user){
+exports.sendEmail = function(user, callBack){
   if (!user) throw new Error('user ' + cannotBlankErrMsg);
 
   if(!user.email) throw new Error('email for user ' + cannotBlankErrMsg);
@@ -31,6 +31,12 @@ exports.sendEmail = function(user){
 
         function(err, resultHtml){
 
+          if(err){
+              if(callBack && (typeof callBack == "function")){
+                  return callBack(err, config.ResultCode_failure);
+              }
+          }
+
           console.log(resultHtml);
 
           var smtpTransport = nodemailer.createTransport("SMTP", config.SMTPTransportDetails);
@@ -46,9 +52,15 @@ exports.sendEmail = function(user){
           smtpTransport.sendMail(mailOptions, function(error, response){
               if(error){
                   console.log(error);
-                  throw error;
+                  if(callBack && (typeof callBack == "function")){
+                      callBack(error, config.ResultCode_failure);
+                  }
+                  //throw error;
               }else{
                   console.log("mail sent: " + response.message);
+                  if(callBack && (typeof callBack == "function")){
+                    callBack(nil, config.ResultCode_success);
+                  }
               }
               smtpTransport.close();
           });

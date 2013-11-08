@@ -27,9 +27,10 @@ var UserSchema = new Schema({
   github: {},
   google: {},
   userCourses : [{ CourseId: String, state: String}],
-  active : {type: Boolean, default: false},
+  active : {type: Boolean, default: false}, //activation will make active = true
   activateCode : {type: Schema.Types.ObjectId},
   activationCodeUsed : {type: Boolean},
+  disabled: {type: Boolean, default: false},//administrator can make this true for some reason
   createdBy: {type: Schema.Types.ObjectId}
 
 })
@@ -146,7 +147,8 @@ UserSchema.methods = {
    */
 
   authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
+    return ((this.encryptPassword(plainText) === this.hashed_password)
+        && (this.active) && (!this.disabled))
   },
 
   /**
