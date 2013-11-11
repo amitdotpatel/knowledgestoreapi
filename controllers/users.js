@@ -33,6 +33,37 @@ exports.HandleSuccessfulLogin = function(req, res){
     res.send('Login successful ');
 }
 
+/*
+* forgot password
+* */
+exports.forgotPass = function(req, res){
+  var userEmail = req.body.email;
+  //find the user
+  User.findOne({email:userEmail}, function(err, user){
+    if (err){
+      res.send(400, err);
+    }
+    else{
+        //reset the password
+      if(!user){
+        return res.send(400, 'email not valid');
+      }
+
+      user.password = utils.getRandomPass(); //'randompass'; //create the random pass
+      user.save(function(err){
+          if (err){
+              res.send(400, err);
+          }
+          else{
+            //send the email to the user
+            emailer.sendChangePassMail(user);
+            res.send('Password has been reset successfully');
+          }
+      })
+    }
+  });
+}
+
 
 /**
  * Create user

@@ -13,6 +13,7 @@ module.exports = function(app, express){
 
     //user APIs
     app.post('/users/logIn', authUser, users.HandleSuccessfulLogin);
+    app.post('/users/forgotPass', users.forgotPass);
     app.post('/logOut', authUser, users.logout);
     app.post('/users/signUp', users.create);
     app.get('/users/:userId', authUser, users.get);
