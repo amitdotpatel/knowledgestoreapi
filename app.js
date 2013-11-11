@@ -24,7 +24,6 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var routes = require('./config/routes')
   , middleWares = require('./config/middleWares')
   , http = require('http')
-  , passport = require('passport')
   , config = require('./config/config')[process.env.NODE_ENV]
   , mongoose = require('mongoose');
 
@@ -34,11 +33,9 @@ app.set('port', process.env.PORT || config.port);
 
 mongoose.connect(config.db);
 
-require('./config/passport')(passport, config);
+middleWares(app, config, express);
 
-middleWares(app, config, express, passport);
-
-routes(app, passport);
+routes(app, express);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

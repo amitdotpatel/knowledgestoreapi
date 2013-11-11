@@ -10,8 +10,6 @@
       "mongoose": "latest",
       "connect-mongo": "latest",
       "connect-flash": "latest",
-      "passport": "latest",
-      "passport-local": "latest",
       "underscore": "latest",
       "swig-email-templates":"latest",
       "nodemailer":"latest"
