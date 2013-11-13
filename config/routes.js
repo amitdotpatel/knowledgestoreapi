@@ -16,7 +16,7 @@ module.exports = function(app, express){
     app.post('/users/forgotPass', users.forgotPass);
     app.post('/logOut', authUser, users.logout);
     app.post('/users/signUp', users.create);
-    app.get('/users/:userId', authUser, users.get);
+    app.get('/users/:userId', /*authUser,*/ users.get);
     app.get('/users/activate/:uniqueUserId', users.activate);
     app.param('userId', users.user);
     app.param('uniqueUserId', users.activateCodeUser);

@@ -7,7 +7,7 @@ var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , crypto = require('crypto')
   , _ = require('underscore')
-  , config = require('../config/config')
+  , config = require('../config/config')[process.env.NODE_ENV]
   , authTypes = ['github', 'twitter', 'facebook', 'google'];
 
 /**
@@ -26,7 +26,10 @@ var UserSchema = new Schema({
   twitter: {},
   github: {},
   google: {},
-  userCourses : [{ CourseId: String, state: String}],
+  userCourses : [{
+      CourseId: {type: Schema.Types.ObjectId, ref : 'Courses'},
+      state: {type : Number, default : 1}
+  }],
   active : {type: Boolean, default: false}, //activation will make active = true
   activateCode : {type: Schema.Types.ObjectId},
   activationCodeUsed : {type: Boolean},
@@ -120,20 +123,50 @@ UserSchema.statics = {
      var Courses = [];
      this.findById(id, function(err, user){
          if (err){
-            condole.log(err)
+            console.log(err)
          }
          else{
              if((user) && (user.userCourses) && (user.userCourses.length))
              for(var i=0; i < user.userCourses.length; i++)
              {
-                 Courses.push(user.userCourses[i].courseId)
+                 Courses.push(user.userCourses[i].CourseId)
              }
          }
      })
      return Courses;
+   },
+
+   load : function(id, cb){
+     this.findOne({_id: id})
+         .populate('userCourses.CourseId')
+         .exec(cb)
    }
 
 }
+
+var prepareForObject  = function(doc, ret, options){
+    if ('function' == typeof doc.ownerDocument) {
+        //not to handle sub-doc
+    }
+    else{
+        console.log('in transform');
+        delete ret.hashed_password;
+        delete ret.activateCode;
+        delete ret.activationCodeUsed;
+        delete ret.salt;
+        delete ret.authToken;
+        //not sure about below
+        delete ret.facebook;
+        delete ret.twitter;
+        delete ret.github;
+        delete ret.google;
+    }
+}
+UserSchema.set('toJSON', { transform : prepareForObject});
+
+
+
+
 
 
 /**

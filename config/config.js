@@ -17,6 +17,11 @@ module.exports = {
           }
       },
       ResultCode_success : 0,
-      ResultCode_failure :1
+      ResultCode_failure :1,
+      courseState : {
+        enrolled : 1,
+        cancelled: 2,
+        completed: 3
+      }
     }
 }
