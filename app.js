@@ -29,7 +29,7 @@ var routes = require('./config/routes')
 
 
 //app settings
-app.set('port', process.env.PORT || config.port);
+app.set('port', config.port);
 
 mongoose.connect(config.db);
 

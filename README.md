@@ -15,6 +15,8 @@ Routes :
     get : '/', use : home page - just to test api is up :) , output : string - crude
 
     post : '/users/logIn', use : login user, params : email, password, output : String result
+    get : '/users/fbLogIn', login with facebook
+    get : '/users/fbLogIn/callback', login with facebook's callback
     post : '/logOut', use : log out the session
     post : '/users/signUp', use : sign up, params : email, password, firstName, lastName, etc, output : String result
     get : '/users/:userId', use : get particular user 

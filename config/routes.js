@@ -12,6 +12,11 @@ module.exports = function(app, express){
     app.get('/', home.index);
 
     //user APIs
+    app.get('/users/fbLogIn', users.fbLogin);
+    app.get('/users/fbLogIn/callback', users.fbLoginCallback, function(req, res){
+        //console.log('callback success req = ', req);
+        res.send('Successfully logged in ' + req.user.firstName);
+    });
     app.post('/users/logIn', authUser, users.HandleSuccessfulLogin);
     app.post('/users/forgotPass', users.forgotPass);
     app.post('/logOut', authUser, users.logout);
@@ -22,13 +27,13 @@ module.exports = function(app, express){
     app.param('uniqueUserId', users.activateCodeUser);
 
     //course APIs
-    app.get('/courses', courses.index)
-    app.get('/courses/my', authUser, courses.userCourses)
-    app.post('/courses', authUser, courses.create)
-    app.get('/courses/:courseID', courses.get)
-    app.put('/courses/:courseID', authUser, courses.update)
-    app.del('/courses/:courseID', authUser, courses.delete)
-    app.get('/courseMaterial/:courseID/byDay', authUser, courses.loadCourseMaterialByDay)
-    app.param('courseID', courses.load)
+    app.get('/courses', courses.index);
+    app.get('/courses/my', authUser, courses.userCourses);
+    app.post('/courses', authUser, courses.create);
+    app.get('/courses/:courseID', courses.get);
+    app.put('/courses/:courseID', authUser, courses.update);
+    app.del('/courses/:courseID', authUser, courses.delete);
+    app.get('/courseMaterial/:courseID/byDay', authUser, courses.loadCourseMaterialByDay);
+    app.param('courseID', courses.load);
 
 }

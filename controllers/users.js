@@ -12,9 +12,21 @@ var mongoose = require('mongoose')
   , utils = require('../utils/utils')
   , config = require('../config/config')[process.env.NODE_ENV]
   , emailer = require('../utils/emailer')
-  ;
+    , passport = require('../config/passport');
 
 var app_user = {};
+
+/**
+ *  fb login
+ */
+exports.fbLogin = function(req, res){
+    console.log('handle fblogin');
+    passport.fbLogin(['email'])(req, res);
+}
+
+exports.fbLoginCallback = function(req, res, next){
+    return passport.fbLoginCallback()(req, res, next);
+}
 
 /**
  * Logout

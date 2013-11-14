@@ -12,7 +12,9 @@
       "connect-flash": "latest",
       "underscore": "latest",
       "swig-email-templates":"latest",
-      "nodemailer":"latest"
+      "nodemailer":"latest",
+      "passport": "0.1.17",
+      "passport-facebook": "1.0.2"
 
   }
 }

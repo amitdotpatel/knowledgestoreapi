@@ -6,7 +6,7 @@
 module.exports = {
     development: {
       db: 'mongodb://localhost/kinoedu',
-      port: 3000,
+      port: process.env.PORT || 3000,
       serverURL : 'http://172.25.30.29:' //TODO - need to check how to get this dynamically
       //TODO - implement this in db
       , SMTPTransportDetails: {
@@ -17,6 +17,8 @@ module.exports = {
           }
       },
       ResultCode_success : 0,
-      ResultCode_failure :1
+      ResultCode_failure :1,
+      FACEBOOK_APP_ID: '1380075888904256',
+      FACEBOOK_APP_SECRET: '1db52af478b80ba67fe285dec538dee6'
     }
 }
