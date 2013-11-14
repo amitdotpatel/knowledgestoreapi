@@ -12,6 +12,7 @@ var mongoose = require('mongoose')
   , utils = require('../utils/utils')
   , config = require('../config/config')[process.env.NODE_ENV]
   , emailer = require('../utils/emailer')
+  , Courses = mongoose.model('Courses')
   ;
 
 var app_user = {};
@@ -127,7 +128,24 @@ exports.create = function (req, res) {
 
 exports.get = function (req, res) {
   var user = req.profile;
-  res.send(user.toJSON());
+  var userJSON = user.toJSON();
+  //get user created courses..
+  var options = {};
+  options.criteria = {user : user._id}
+  Courses.list(options, function(err, courses){
+      if (err){
+          userJSON.createdCourses = {};
+      }
+      else{
+          var cCourses = [];
+          for(var i = 0; i < courses.length; i++){
+              cCourses.push(courses[i].toJSON());
+          }
+          userJSON.createdCourses = cCourses;
+      }
+      res.send(userJSON);
+  }, false);
+
 }
 
 /**

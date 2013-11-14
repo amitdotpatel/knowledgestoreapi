@@ -101,15 +101,29 @@ CoursesSchema.statics = {
    * List courses
    */
 
-  list: function (options, cb) {
+  list: function (options, cb, populate) {
     console.log('in list');
 
     var criteria = options.criteria || {}
+    var userPopulate = true;
+    if(populate !== null){
+      if(populate === false){
+          userPopulate = false;
+      }
+    }
+    if(userPopulate){
+        this.find(criteria)
+            .populate('user', 'firstName lastName')
+            .sort({'createdAt': -1}) // sort by date
+            .exec(cb)
 
-    this.find(criteria)
-     .populate('user', 'firstName lastName')
-     .sort({'createdAt': -1}) // sort by date
-     .exec(cb)
+    }
+    else{
+        this.find(criteria)
+            .sort({'createdAt': -1})
+            .exec(cb)
+
+    }
   }
 }
 
