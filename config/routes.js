@@ -18,6 +18,7 @@ module.exports = function(app, express){
     app.post('/users/signUp', users.create);
     app.get('/users/:userId', /*authUser,*/ users.get);
     app.get('/users/activate/:uniqueUserId', users.activate);
+    app.post('/users/changePass', authUser, users.changePass);
     app.param('userId', users.user);
     app.param('uniqueUserId', users.activateCodeUser);
 

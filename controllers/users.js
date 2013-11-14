@@ -67,6 +67,29 @@ exports.forgotPass = function(req, res){
   });
 }
 
+/*
+* change pass
+* */
+exports.changePass = function(req, res){
+  var currentPass = req.body.currentPass;
+  var newPass = req.body.newPass;
+  var user = req.user;
+  if (user.authenticate(currentPass)){
+    user.password = newPass;
+    user.save(function(err){
+      if(err){
+          res.send(500, err)
+      }
+      else{
+        res.send('changed successfully');
+      }
+    })
+  }
+  else{
+    res.send(400, 'invalid current password');
+  }
+
+}
 
 /**
  * Create user
