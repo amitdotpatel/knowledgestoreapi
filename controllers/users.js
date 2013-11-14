@@ -31,7 +31,9 @@ exports.logout = function (req, res) {
 * handle successful authentication
 * */
 exports.HandleSuccessfulLogin = function(req, res){
-    res.send('Login successful ');
+    getUserJSON(req.user, function(err, userJSON){
+        res.send(userJSON);
+    });
 }
 
 /*
@@ -122,29 +124,44 @@ exports.create = function (req, res) {
   })
 }
 
+/*
+* return integrated JSON for the user
+* */
+var getUserJSON = function(user, cb){
+    var userJSON = user.toJSON();
+    //get user created courses..
+    var options = {};
+    options.criteria = {user : user._id}
+    Courses.list(options, function(err, courses){
+        if (err){
+            userJSON.createdCourses = {};
+            if (cb) {
+                cb(err, userJSON);
+            }
+        }
+        else{
+            var cCourses = [];
+            for(var i = 0; i < courses.length; i++){
+                cCourses.push(courses[i].toJSON());
+            }
+            userJSON.createdCourses = cCourses;
+        }
+        if(cb){
+            cb(null, userJSON);
+        }
+    }, false);
+};
+
+
 /**
  *  Show profile
  */
 
 exports.get = function (req, res) {
   var user = req.profile;
-  var userJSON = user.toJSON();
-  //get user created courses..
-  var options = {};
-  options.criteria = {user : user._id}
-  Courses.list(options, function(err, courses){
-      if (err){
-          userJSON.createdCourses = {};
-      }
-      else{
-          var cCourses = [];
-          for(var i = 0; i < courses.length; i++){
-              cCourses.push(courses[i].toJSON());
-          }
-          userJSON.createdCourses = cCourses;
-      }
-      res.send(userJSON);
-  }, false);
+  getUserJSON(user, function(err, userJSON){
+    res.send(userJSON);
+  });
 
 }
 
