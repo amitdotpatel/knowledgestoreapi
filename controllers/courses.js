@@ -194,14 +194,17 @@ exports.enroll = function (req, res) {
                 if (err)
                 {
                     console.log(err)
+                    res.send(500, err);
                 }
                 else{
-                    console.log('enrolled successfully')
+                    res.send('enrolled successfully');
                 }
             });
     }
     catch(exception){
+
         console.log(exception.error_message())
+        res.send(500, exception.error_message());
     }
 }
 

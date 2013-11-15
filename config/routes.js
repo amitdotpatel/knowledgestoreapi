@@ -29,6 +29,7 @@ module.exports = function(app, express){
     app.get('/courses/:courseID', courses.get)
     app.put('/courses/:courseID', authUser, courses.update)
     app.del('/courses/:courseID', authUser, courses.delete)
+    app.post('/courses/enroll/:courseID', authUser, courses.enroll);
     app.param('courseID', courses.load)
 
 }

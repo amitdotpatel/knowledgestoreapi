@@ -28,4 +28,5 @@ Routes :
     get : '/courses/:courseID', use : get particular course, output: JSON
     put : '/courses/:courseID', use : edit particular course
     del : '/courses/:courseID', use : delete a course
+    post : '/courses/enroll/:courseID', use : enroll current user for the course
 
