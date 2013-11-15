@@ -37,12 +37,14 @@ var CoursesSchema = new Schema({
   level : {type: Number},
   rating : {type: Number},
   courseMaterial : [{
-    day: {type: Number, default: 0},
-    section : {type: Number},
-    topic : {type: Number},
-    title: {type : String, default : '', trim : true},
-    vidLink: {type : String, default : ''},
-    content: {type : String, default : '', trim : true}
+      sectionNumber : {type:Number},
+      sectionTitle : {type:String},
+      topics : [{
+        topicNumber :  {type: Number},
+        topicTitle : {type: String},
+        topicVidLink : {type : String, default : ''},
+        topicContent: {type : String, default : '', trim : true}
+      }]
   }]
 })
 
@@ -65,6 +67,9 @@ CoursesSchema.path('vidLink').validate(function(link){
 CoursesSchema.path('startDate').validate(function(startDate){
     return true;//(startDate !== null)
 }, 'Start Date cannot be blank')
+
+
+
 
 
 /**

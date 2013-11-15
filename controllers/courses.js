@@ -14,28 +14,6 @@ var mongoose = require('mongoose')
   , _ = require('underscore')
   , Users = mongoose.model('User')
 
-/*
-* rendering course material for a particular day
-* */
-exports.loadCourseMaterialByDay = function (req, res){
-  //the day for which course material needs to be rendered
-  var day = req.params.day;
-  var course = req.course;
-
-  for(var i = 0; i < course.duration; i++){
-     console.log(course.courseMaterial[i].day);
-     if (course.courseMaterial[i].day === day){
-       var response = {day : day,
-         content: course.courseMaterial[i].content,
-         vidLink : course.courseMaterial[i].vidLink,
-         title: course.courseMaterial[i].title
-       };
-       res.send(response.toJSON());
-       break;
-     }
-  }
-}
-
 /**
  * Load course for the courseID
  */
@@ -57,6 +35,7 @@ exports.load = function(req, res, next, id){
  */
 
 exports.index = function(req, res){
+    console.log(req);
   var options = {}
   Courses.list(options, function(err, courses) {
     if (err) {
@@ -114,18 +93,28 @@ exports.create = function (req, res) {
 
   /* TODO - need to check req body before uploading */
 
-  var self = this;
-              if(course.duration){
-                  course.endDate = utils.createEndDate(course.startDate, course.duration);
+  VaildateCourseMaterial(req, course, function(err){
+      if(err){
+        res.send(400, err);
+      }
+      else{
+          var self = this;
+          if(course.duration){
+              course.endDate = utils.createEndDate(course.startDate, course.duration);
+          }
+          course.uploadAndSave(course, function (err) {
+              if (err) {
+                  console.log(err);
+                  res.send(400, err);
               }
-              course.uploadAndSave(course, function (err) {
-                  if (!err) {
-                    console.log(err);
-                  }
-                  else{
-                      res.send('course created successfully!');
-                  }
-              })
+              else{
+                  res.send('course created successfully!');
+              }
+          })
+      }
+  })
+
+
 }
 
 /**
@@ -134,19 +123,28 @@ exports.create = function (req, res) {
 
 exports.update = function(req, res){
   var course = req.course
-  course = _.extend(course, req.body)
-           if(course.duration){
-               course.endDate = utils.createEndDate(course.startDate, course.duration);
-           }
+  course = _.extend(course, req.body);
 
-           course.uploadAndSave(course, function(err) {
-               if (!err) {
-                   console.log(err.message);
-               }
-               else{
-                 res.send('course updated successfully!!');
-               }
-           })
+    VaildateCourseMaterial(req, course, function(err){
+        if(err){
+            res.send(400, err);
+        }
+        else{
+            var self = this;
+            if(course.duration){
+                course.endDate = utils.createEndDate(course.startDate, course.duration);
+            }
+            course.uploadAndSave(course, function (err) {
+                if (err) {
+                    console.log(err);
+                    res.send(400, err);
+                }
+                else{
+                    res.send('course updated successfully!');
+                }
+            })
+        }
+    })
 }
 
 /**
@@ -208,51 +206,37 @@ exports.enroll = function (req, res) {
 }
 
 /*
- * get course Material & duration - ToDo - add error while callback, implement in callback as well
- * */
-AddCourseMaterial = function (req, course, cb){
-
-    //find duration of the course & set course duration , totalDays
-    var duration = Number(course.duration);  //ToDo - remove hardcoding
-    //course.duration = duration;
-    console.log(course);
-    var courseMaterial = [];
-    for(var i= 1; i <= duration; i++){
-        var index;
-        index = i > 9 ? '' + i: '0' + i;
-
-        var title = req.body['title'+index] ? req.body['title'+index] : '';
-        courseMaterial.push({day: i,
-            content : req.body['descDay'+index],
-            vidLink : req.body['vidLink'+index],
-            title : req.body['dayTitle'+index]})
-    }
-
-    course.courseMaterial = courseMaterial;
-    cb(course);
-}
-
-/*
  * validation on course contents -
- * ToDo - perhaps, these validations should be implemented in the model, was getting difficulties while implementing that
  * */
 VaildateCourseMaterial = function(req, course, cb){
     var err = null;
-    var index, content, vidLink, title;
+    var topic, content, vidLink, title, number, section;
     err = []
-    for(var i =1; i <= course.duration; i++){
-        index = i > 9 ? '' + i: '0' + i;
-        content = req.body['descDay'+index];
-        vidLink = req.body['vidLink'+index];
-        title  = req.body['dayTitle'+index];
-        if(title === ''){
-            err.push('Title can be blank for day :' + i.toString());
+    for(var i =0; i < course.courseMaterial.length; i++){
+        section = course.courseMaterial[i];
+        var referenceSectionNumber = section.sectionNumber || (i+1);
+        if (!section.sectionNumber){
+          err.push('section number is missing for section ' + referenceSectionNumber);
         }
-        if ((vidLink === '') && (content === '')){
-            err.push('Either Video Link or Description should be available for day : ' + i.toString());
+        if ((!section.sectionTitle) && (section.sectionTitle === '')){
+          err.push('section title is missing for section ' + referenceSectionNumber);
         }
-        if((vidLink !== '') && (!utils.validateVidLink(vidLink))){
-            err.push('Video Link is not valid for day : ' + i.toString());
+        for(var j=0; j < section.topics.length; j++){
+          topic = section.topics[j];
+            content = topic.topicContent;
+            vidLink = topic.vidLink;
+            title  = topic.topicTitle;
+            number = topic.topicNumber;
+            var referenceTopicNumber = number || (j+1);
+            if((!title) || (title === '')){
+                err.push('Title can be blank for section : '+ referenceSectionNumber +' topic :' + referenceTopicNumber);
+            }
+            if (((!vidLink) || (vidLink === '')) && ((!content) || (content === ''))){
+                err.push('Either Video Link or Description should be available for section : '+ referenceSectionNumber +' topic :' + referenceTopicNumber);
+            }
+            if(((vidLink) && (vidLink !== '')) && (!utils.validateVidLink(vidLink))){
+                err.push('Video Link is not valid for section : '+ referenceSectionNumber +' topic :' + referenceTopicNumber);
+            }
         }
     }
     if(err.length ===0 ){
@@ -264,71 +248,3 @@ VaildateCourseMaterial = function(req, course, cb){
 }
 
 
-
-exports.checkDateRange = function(course){
-    return checkDateRange(course);
-}
-
-
-checkDateRange = function(course){
-    var sysDate = new Date();
-    var courseDate = new Date(course.startDate.getTime());
-    sysDate.setHours(0, 0, 0, 0);
-    courseDate.setHours(0, 0, 0, 0);
-    var dateCompare;
-    dateCompare = 0;
-    if (sysDate < courseDate){
-        dateCompare = 1
-    }
-    else
-    {
-        var courseEndDate = new Date(courseDate.getTime()+ ((1000 * 60 * 60 * 24) * course.duration-1));
-        console.log(courseEndDate);
-        if (sysDate > courseEndDate){
-            dateCompare = 1
-        }
-    }
-    var inCourseRange;
-    if (dateCompare === 0){
-        inCourseRange = true
-    }
-    else{
-        inCourseRange = false;
-    }
-
-    return inCourseRange;
-}
-
-exports.checkEnrollStatus = function(req,course){
-    return checkEnrollStatus(req, course);
-}
-
-checkEnrollStatus = function(req,course){
-    var enrollState = false;
-    if(!req.user){
-        return enrollState;
-    }
-    var userCourses = req.user.userCourses;
-    var currentCourseId = course._id;
-
-    var sysDate = new Date();
-    var courseDate = new Date(course.startDate.getTime());
-    sysDate.setHours(0, 0, 0, 0);
-    courseDate.setHours(0, 0, 0, 0);
-    var dateCompare;
-    dateCompare = 0;
-    var courseEndDate = new Date(courseDate.getTime()+ ((1000 * 60 * 60 * 24) * course.duration-1));
-    console.log(courseEndDate);
-    if (sysDate > courseEndDate){
-        dateCompare = 1
-    }
-
-    for(var i=0; i< userCourses.length; i++){
-        if((currentCourseId == userCourses[i].CourseId) || (dateCompare == 1)){
-            console.log(currentCourseId + " " + userCourses[i].CourseId);
-            enrollState = true;
-        }
-    }
-
-    return enrollState;
-}

@@ -23,7 +23,7 @@ var app_user = {};
  */
 
 exports.logout = function (req, res) {
-  req.logout();
+  //req.logout();
   res.send('logged out successfully');
 }
 
