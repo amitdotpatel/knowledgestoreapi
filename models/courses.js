@@ -98,7 +98,7 @@ CoursesSchema.statics = {
   load: function (id, cb) {
     this.findOne({ _id : id })
       .populate('user', 'email firstName lastName')
-      .populate('comments.user')
+      .populate('comments.user', 'email firstName lastName')
       .exec(cb)
   },
 

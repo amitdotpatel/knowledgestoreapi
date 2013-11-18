@@ -13,6 +13,7 @@ var mongoose = require('mongoose')
   , utils = require('../utils/utils')
   , _ = require('underscore')
   , Users = mongoose.model('User')
+  , config = require('../config/config')[process.env.NODE_ENV]
 
 /**
  * Load course for the courseID
@@ -90,6 +91,7 @@ exports.userCourses = function (req, res){
 exports.create = function (req, res) {
   var course = new Courses(req.body)
   course.user = req.user;
+  course.createdAt = Date.now;
 
   /* TODO - need to check req body before uploading */
 
@@ -124,6 +126,11 @@ exports.create = function (req, res) {
 exports.update = function(req, res){
   var course = req.course
   course = _.extend(course, req.body);
+
+  /*
+  * TODO - need to validate here.
+  * We should not allow user to update some fields like createdAt, user, comments, etc.
+  * */
 
     VaildateCourseMaterial(req, course, function(err){
         if(err){
@@ -189,7 +196,7 @@ exports.enroll = function (req, res) {
         var opts  = {};
         //need to check whether user has already enrolled for this course before pushing
         Users.findByIdAndUpdate(req.user.id,
-            { $push :  { userCourses : { CourseId: req.course.id, state: 'enrolled' } } },
+            { $push :  { userCourses : { CourseId: req.course.id, state: config.courseState.enrolled } } },
             function (err, doc) {
                 if (err)
                 {
@@ -202,8 +209,7 @@ exports.enroll = function (req, res) {
             });
     }
     catch(exception){
-
-        console.log(exception.error_message())
+        console.log(exception.error_message());
         res.send(500, exception.error_message());
     }
 }
