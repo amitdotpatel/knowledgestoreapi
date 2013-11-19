@@ -9,13 +9,33 @@ module.exports = function(app, express){
     var authUser = BasicAuth.authUser;
 
     //home APIs
-    app.get('/', home.index);
+    app.get('/', function(req, res, next){
+        console.log('####################################### /');
+        console.log('/ ' + req.headers.cookie);
+        console.log('#######################################');
+        home.index(req, res, next);
+    });
 
     //user APIs
-    app.get('/users/fbLogIn', users.fbLogin);
+    app.get('/users/fbLogIn', function(req, res, next){
+        console.log('users/fbLogin ' + req.headers.cookie);
+        console.log('users/fbLogin user =  ' + req.user);
+        if(req.user){
+            res.redirect('http://localhost:8080/');
+        } else {
+            users.fbLogin(req, res, next);
+        }
+    });
     app.get('/users/fbLogIn/callback', users.fbLoginCallback, function(req, res){
+        console.log('users/fbLogin/callback user =  ' + req.user);
         //console.log('callback success req = ', req);
-        res.send('Successfully logged in ' + req.user.firstName);
+        //redirect this to callback url provided, default would be the standard kinoedu URL
+        //currently assuming the default to be localhost:8080
+        console.log('####################################### fblogin callback');
+        console.log('users/fbLogin/callback ' + req.headers.cookie);
+        console.log('#######################################');
+        res.redirect('http://localhost:8080/api/users/fbLogin');
+        //res.send('Hi ! ' + req.user);
     });
     app.post('/users/logIn', authUser, users.HandleSuccessfulLogin);
     app.post('/users/forgotPass', users.forgotPass);
@@ -27,7 +47,10 @@ module.exports = function(app, express){
     app.param('uniqueUserId', users.activateCodeUser);
 
     //course APIs
-    app.get('/courses', courses.index);
+    app.get('/courses', function(req, res, next){
+        console.log('/courses user = ' + req.user);
+        courses.index(req, res, next);
+    });
     app.get('/courses/my', authUser, courses.userCourses);
     app.post('/courses', authUser, courses.create);
     app.get('/courses/:courseID', courses.get);

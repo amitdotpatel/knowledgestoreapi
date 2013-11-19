@@ -7,7 +7,7 @@ var mongoose = require('mongoose')
     , config = require('../config/config');
 
 passport.serializeUser(function(user, done) {
-    //console.log("Serialize user user ", user);
+    console.log("Serialize user user ", user.firstName);
     done(null, user.id)
 })
 
