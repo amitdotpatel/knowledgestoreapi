@@ -37,12 +37,14 @@ var CoursesSchema = new Schema({
   level : {type: Number},
   rating : {type: Number},
   courseMaterial : [{
-    day: {type: Number, default: 0},
-    section : {type: Number},
-    topic : {type: Number},
-    title: {type : String, default : '', trim : true},
-    vidLink: {type : String, default : ''},
-    content: {type : String, default : '', trim : true}
+      sectionNumber : {type:Number},
+      sectionTitle : {type:String},
+      topics : [{
+        topicNumber :  {type: Number},
+        topicTitle : {type: String},
+        topicVidLink : {type : String, default : ''},
+        topicContent: {type : String, default : '', trim : true}
+      }]
   }]
 })
 
@@ -65,6 +67,9 @@ CoursesSchema.path('vidLink').validate(function(link){
 CoursesSchema.path('startDate').validate(function(startDate){
     return true;//(startDate !== null)
 }, 'Start Date cannot be blank')
+
+
+
 
 
 /**
@@ -93,7 +98,7 @@ CoursesSchema.statics = {
   load: function (id, cb) {
     this.findOne({ _id : id })
       .populate('user', 'email firstName lastName')
-      .populate('comments.user')
+      .populate('comments.user', 'email firstName lastName')
       .exec(cb)
   },
 
@@ -101,15 +106,29 @@ CoursesSchema.statics = {
    * List courses
    */
 
-  list: function (options, cb) {
+  list: function (options, cb, populate) {
     console.log('in list');
 
     var criteria = options.criteria || {}
+    var userPopulate = true;
+    if(populate !== null){
+      if(populate === false){
+          userPopulate = false;
+      }
+    }
+    if(userPopulate){
+        this.find(criteria)
+            .populate('user', 'firstName lastName')
+            .sort({'createdAt': -1}) // sort by date
+            .exec(cb)
 
-    this.find(criteria)
-     .populate('user', 'firstName lastName')
-     .sort({'createdAt': -1}) // sort by date
-     .exec(cb)
+    }
+    else{
+        this.find(criteria)
+            .sort({'createdAt': -1})
+            .exec(cb)
+
+    }
   }
 }
 

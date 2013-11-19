@@ -41,22 +41,20 @@ module.exports = function(app, express){
     app.post('/users/forgotPass', users.forgotPass);
     app.post('/logOut', authUser, users.logout);
     app.post('/users/signUp', users.create);
-    app.get('/users/:userId', authUser, users.get);
+    app.get('/users/:userId', /*authUser,*/ users.get);
     app.get('/users/activate/:uniqueUserId', users.activate);
+    app.post('/users/changePass', authUser, users.changePass);
     app.param('userId', users.user);
     app.param('uniqueUserId', users.activateCodeUser);
 
     //course APIs
-    app.get('/courses', function(req, res, next){
-        console.log('/courses user = ' + req.user);
-        courses.index(req, res, next);
-    });
-    app.get('/courses/my', authUser, courses.userCourses);
-    app.post('/courses', authUser, courses.create);
-    app.get('/courses/:courseID', courses.get);
-    app.put('/courses/:courseID', authUser, courses.update);
-    app.del('/courses/:courseID', authUser, courses.delete);
-    app.get('/courseMaterial/:courseID/byDay', authUser, courses.loadCourseMaterialByDay);
-    app.param('courseID', courses.load);
+    app.get('/courses', courses.index)
+    app.get('/courses/my', authUser, courses.userCourses)
+    app.post('/courses', authUser, courses.create)
+    app.get('/courses/:courseID', courses.get)
+    app.put('/courses/:courseID', authUser, courses.update)
+    app.del('/courses/:courseID', authUser, courses.delete)
+    app.post('/courses/enroll/:courseID', authUser, courses.enroll);
+    app.param('courseID', courses.load)
 
 }

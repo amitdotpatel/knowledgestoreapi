@@ -12,7 +12,9 @@ var mongoose = require('mongoose')
   , utils = require('../utils/utils')
   , config = require('../config/config')[process.env.NODE_ENV]
   , emailer = require('../utils/emailer')
-    , passport = require('../config/passport');
+    , passport = require('../config/passport')
+  , Courses = mongoose.model('Courses')
+  ;
 
 var app_user = {};
 
@@ -34,7 +36,7 @@ exports.fbLoginCallback = function(req, res, next){
  */
 
 exports.logout = function (req, res) {
-  req.logout();
+  //req.logout();
   res.send('logged out successfully');
 }
 
@@ -42,7 +44,9 @@ exports.logout = function (req, res) {
 * handle successful authentication
 * */
 exports.HandleSuccessfulLogin = function(req, res){
-    res.send('Login successful ');
+    getUserJSON(req.user, function(err, userJSON){
+        res.send(userJSON);
+    });
 }
 
 /*
@@ -76,6 +80,29 @@ exports.forgotPass = function(req, res){
   });
 }
 
+/*
+* change pass
+* */
+exports.changePass = function(req, res){
+  var currentPass = req.body.currentPass;
+  var newPass = req.body.newPass;
+  var user = req.user;
+  if (user.authenticate(currentPass)){
+    user.password = newPass;
+    user.save(function(err){
+      if(err){
+          res.send(500, err)
+      }
+      else{
+        res.send('changed successfully');
+      }
+    })
+  }
+  else{
+    res.send(400, 'invalid current password');
+  }
+
+}
 
 /**
  * Create user
@@ -133,13 +160,45 @@ exports.create = function (req, res) {
   })
 }
 
+/*
+* return integrated JSON for the user
+* */
+var getUserJSON = function(user, cb){
+    var userJSON = user.toJSON();
+    //get user created courses..
+    var options = {};
+    options.criteria = {user : user._id}
+    Courses.list(options, function(err, courses){
+        if (err){
+            userJSON.createdCourses = {};
+            if (cb) {
+                cb(err, userJSON);
+            }
+        }
+        else{
+            var cCourses = [];
+            for(var i = 0; i < courses.length; i++){
+                cCourses.push(courses[i].toJSON());
+            }
+            userJSON.createdCourses = cCourses;
+        }
+        if(cb){
+            cb(null, userJSON);
+        }
+    }, false);
+};
+
+
 /**
  *  Show profile
  */
 
 exports.get = function (req, res) {
   var user = req.profile;
-  res.send(user.toJSON());
+  getUserJSON(user, function(err, userJSON){
+    res.send(userJSON);
+  });
+
 }
 
 /**
@@ -147,14 +206,25 @@ exports.get = function (req, res) {
  */
 
 exports.user = function (req, res, next, id) {
-  User
-    .findOne({ _id : id })
-    .exec(function (err, user) {
-      if (err) return next(err)
-      if (!user) return next(new Error('Failed to load User ' + id))
-      req.profile = user
+//  User
+//    .findOne({ _id : id })
+//    .exec(function (err, user) {
+//      if (err) return next(err)
+//      if (!user) return next(new Error('Failed to load User ' + id))
+//      req.profile = user
+//      next()
+//    })
+     User.load(id, function(err, user){
+
+      if (err) return next(err);
+
+      if (!user) return next(new Error('Failed to load User ' + id));
+      console.log(user);
+      req.profile = user;
       next()
-    })
+
+     })
+
 }
 
 

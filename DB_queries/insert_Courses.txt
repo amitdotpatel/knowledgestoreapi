@@ -42,33 +42,30 @@ db.courses.insert({
   level : 1,
   rating : 1,
   courseMaterial : [{
-    day: 1,
-    section : 1,
-    topic : 1,
-    title: 'section1topic1',
-    vidLink: 'http://www.youtube.com/watch?v=i9MHigUZKEM',
-    content: 'content1'
+      sectionNumber : 1,
+      sectionTitle : 'section1',
+      topics : [{
+        topicNumber :  1,
+        topicTitle : 'topic1',
+        topicVidLink : vidLinks[i%2],
+        topicContent: 'Topic content ' + i +  '1'
+      },
+      {
+              topicNumber :  2,
+              topicTitle : 'topic1-2',
+              topicVidLink : vidLinks[(i+1)%2],
+              topicContent: 'Topic content ' + i +  '2'
+            }
+      ]
   }, {
-    day: 1,
-    section : 1,
-    topic : 2,
-    title: 'section1topic2',
-    vidLink: 'http://www.youtube.com/watch?v=bW6Y_CBQJNI',
-    content: 'content1'
-  }, {
-    day: 1,
-    section : 2,
-    topic : 1,
-    title: 'section2topic1',
-    vidLink: 'http://www.youtube.com/watch?v=i9MHigUZKEM',
-    content: 'content1'
-  },{
-    day: 1,
-    section : 2,
-    topic : 2,
-    title: 'section2topic2',
-    vidLink: 'http://www.youtube.com/watch?v=bW6Y_CBQJNI',
-    content: 'content1'
+      sectionNumber : 2,
+      sectionTitle : 'section2',
+      topics : [{
+        topicNumber :  1,
+        topicTitle : 'topic1',
+        topicVidLink : vidLinks[i%2],
+        topicContent: 'Topic content ' + i +  '1'
+      }]
   }]
 });
 }

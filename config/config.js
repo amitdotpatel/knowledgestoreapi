@@ -19,6 +19,11 @@ module.exports = {
       ResultCode_success : 0,
       ResultCode_failure :1,
       FACEBOOK_APP_ID: '1380075888904256',
-      FACEBOOK_APP_SECRET: '1db52af478b80ba67fe285dec538dee6'
+      FACEBOOK_APP_SECRET: '1db52af478b80ba67fe285dec538dee6',
+      courseState : {
+        enrolled : 1,
+        cancelled: 2,
+        completed: 3
+      }
     }
 }
