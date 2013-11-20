@@ -30,6 +30,17 @@ exports.fbLoginCallback = function(req, res, next){
 }
 
 /**
+ *  github login
+ */
+exports.githubLogin = function(req, res, next){
+    passport.githubLogin(['user:email'])(req, res, next);
+}
+
+exports.githubLoginCallback = function(req, res, next){
+    return passport.githubLoginCallback()(req, res, next);
+}
+
+/**
  * Logout
  * TODO - need to test login - logout with UI
  */
