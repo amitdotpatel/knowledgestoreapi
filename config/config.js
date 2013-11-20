@@ -22,6 +22,8 @@ module.exports = {
       FACEBOOK_APP_SECRET: '1db52af478b80ba67fe285dec538dee6',
       GITHUB_CLIENT_ID: '188af985226c4715e0db',
       GITHUB_CLIENT_SECRET: '07ddb19045ee53af7ca02787067edc6e4e9c3722',
+      GOOGLE_CLIENT_ID: '774542677130.apps.googleusercontent.com',
+      GOOGLE_CLIENT_SECRET: 'PK3CYlbU47LrvQU-GwQuEVdu',
       courseState : {
         enrolled : 1,
         cancelled: 2,

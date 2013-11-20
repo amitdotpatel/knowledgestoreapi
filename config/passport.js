@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
     , LocalStrategy = require('passport-local').Strategy
     , FacebookStrategy = require('passport-facebook').Strategy
     , GitHubStrategy = require('passport-github').Strategy
+    , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
     , User = mongoose.model('User')
     , config = require('../config/config');
 
@@ -23,7 +24,7 @@ passport.use(new LocalStrategy({
         passwordField: 'password'
     },
     function(email, password, done) {
-        console.log('in passport local strategy')
+        //console.log('in passport local strategy')
         User.findOne({ email: email, active: true }, function (err, user) {
             if (err) {
                 console.log('in err');
@@ -115,6 +116,44 @@ passport.use(new GitHubStrategy({
     }
 ));
 
+// google oauth2 strategy
+passport.use(new GoogleStrategy({
+        clientID: config.development.GOOGLE_CLIENT_ID,
+        clientSecret: config.development.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/users/googleLogin/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        //currently saving just the login, actual user details not available in profile.
+        User.findOne({ 'google.id': profile.id }, function (err, user) {
+            if (err) {
+                return done(err);
+            }
+            //if user is not present, create a new user
+            if (!user) {
+                user = new User({
+                    name: profile.displayName
+                    , email: profile.emails[0].value
+                    , firstName: profile.name.givenName
+                    , lastName : profile.name.familyName
+                    , provider: 'google'
+                    , google: {
+                        'id':profile.id
+                    }
+                });
+                user.save(function (err, user) {
+                    if (err) {
+                        console.log('Error while saving Google User :: ', err);
+                    }
+                    return done(err, user);
+                })
+            } else {
+                return done(err, user);
+            }
+        })
+    }
+));
+
 module.exports.fbLogin = function (scope) {
     return passport.authenticate('facebook', {scope: scope});
 }
@@ -129,6 +168,14 @@ module.exports.githubLogin = function (scope) {
 
 module.exports.githubLoginCallback = function () {
     return passport.authenticate('github');
+};
+
+module.exports.googleLogin = function (scope) {
+    return passport.authenticate('google', {scope: scope});
+}
+
+module.exports.googleLoginCallback = function () {
+    return passport.authenticate('google');
 };
 
 module.exports.login = function () {

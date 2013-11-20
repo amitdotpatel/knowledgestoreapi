@@ -41,6 +41,18 @@ exports.githubLoginCallback = function(req, res, next){
 }
 
 /**
+ *  google login
+ */
+exports.googleLogin = function(req, res, next){
+    passport.googleLogin(['https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email'])(req, res, next);
+}
+
+exports.googleLoginCallback = function(req, res, next){
+    return passport.googleLoginCallback()(req, res, next);
+}
+
+/**
  * Logout
  * TODO - need to test login - logout with UI
  */

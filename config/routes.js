@@ -43,6 +43,22 @@ module.exports = function(app, express){
         res.redirect('http://localhost:8080/');
         //console.log(res);
     });
+
+    //login with google
+    app.get('/users/googleLogIn', function(req, res, next){
+        if(req.user){
+            res.redirect('http://localhost:8080/');
+            //res.send(200, "Already logged in");
+        } else {
+            users.googleLogin(req, res, next);
+        }
+    });
+    app.get('/users/googleLogin/callback', users.googleLoginCallback, function(req, res){
+        //redirect this to callback url provided, default would be the standard kinoedu URL
+        //currently assuming the default to be localhost:8080
+        res.redirect('http://localhost:8080/');
+        //console.log(res);
+    });
     app.post('/users/logIn', users.login, users.HandleSuccessfulLogin);
     app.post('/users/forgotPass', users.forgotPass);
     app.get('/logOut', authUser, users.logout);
