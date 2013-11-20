@@ -14,7 +14,9 @@
       "swig-email-templates":"latest",
       "nodemailer":"latest",
       "passport": "0.1.17",
-      "passport-facebook": "1.0.2"
+      "passport-facebook": "1.0.2",
+      "passport-local": "0.1.6",
+      "connect-flash": "0.1.1"
 
   }
 }

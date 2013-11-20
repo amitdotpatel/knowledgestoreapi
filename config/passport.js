@@ -1,27 +1,23 @@
 
 var mongoose = require('mongoose')
     , passport = require('passport')
-//    , LocalStrategy = require('passport-local').Strategy
+    , LocalStrategy = require('passport-local').Strategy
     , FacebookStrategy = require('passport-facebook').Strategy
     , User = mongoose.model('User')
     , config = require('../config/config');
 
 passport.serializeUser(function(user, done) {
-    console.log("Serialize user user ", user.firstName);
     done(null, user.id)
 })
 
 passport.deserializeUser(function(id, done) {
-    console.log("In passport.deserialize user id = " + id);
     User.findOne({ _id: id }, function (err, user) {
-        //console.log("err ", err);
-        //console.log("user ", user);
         done(err, user);
     })
 })
 
 // use local strategy
-/*passport.use(new LocalStrategy({
+passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
     },
@@ -33,16 +29,16 @@ passport.deserializeUser(function(id, done) {
                 return done(err) }
             if (!user) {
                 console.log('in not user');
-                return done(null, false, { message: 'Unknown user' })
+                return done(null, false, { message: 'Unknown user' });
             }
             if (!user.authenticate(password)) {
                 console.log('in bad pass');
-                return done(null, false, { message: 'Invalid password' })
+                return done(null, false, { message: 'Invalid password' });
             }
-            return done(null, user)
+            return done(null, user);
         })
     }
-))*/
+));
 
 passport.use(new FacebookStrategy({
         clientID: config.development.FACEBOOK_APP_ID,
@@ -50,15 +46,11 @@ passport.use(new FacebookStrategy({
         callbackURL: 'http://localhost:' + config.development.port + '/users/fbLogIn/callback'
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log('callback after login accessToken ', accessToken);
-        console.log('callback after login refreshToken ', refreshToken);
-        console.log('callback after login profile ', profile);
-        console.log('callback after login done ', done);
-
         User.findOne({ 'facebook.id': profile.id }, function (err, user) {
             if (err) {
                 return done(err);
             }
+            //if user is not present, create a new user
             if (!user) {
                 user = new User({
                     name: profile.displayName
@@ -71,11 +63,8 @@ passport.use(new FacebookStrategy({
                     }
                 });
                 user.save(function (err, user) {
-                    //console.log('err ', err);
-                    //console.log('user ', user);
                     if (err) {
-                        //console.log('Error while saving Facebook User');
-                        //console.log(err);
+                        console.log('Error while saving Facebook User :: ', err);
                     }
                     return done(err, user);
                 })
@@ -92,4 +81,10 @@ module.exports.fbLogin = function (scope) {
 
 module.exports.fbLoginCallback = function () {
     return passport.authenticate('facebook');
-}
+};
+
+module.exports.login = function () {
+    return passport.authenticate('local', {
+        failureFlash: true
+    });
+};

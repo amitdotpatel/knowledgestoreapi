@@ -17,35 +17,15 @@ var mongoose = require('mongoose')
 module.exports = function(express){
 
     var auth = {
-      authUser : express.basicAuth(function(email, pass, callback) {
-          //var result = (user === 'testUser' && pass === 'testPass');
-          console.log('in basic auth')
-          User.findOne({ email: email, active: true }, function (err, user) {
-              if (err) {
-                  console.log('in err');
-                  return callback(err) }
-              if (!user) {
-                  console.log('in not user');
-                  return callback(null)
-              }
-              if (!user.authenticate(pass)) {
-                  console.log('in bad pass');
-                  return callback(null)
-              }
-
-              return callback(null, user);
-          })
-
-
-
-      })
-
-
-
+      authUser : function(req, res, next){
+          if(req.user){
+              next(null);
+          } else {
+              res.send(401, "Unauthorized");
+          }
+      }
     }
     return auth;
-    //return authenticateUser;
-
 };
 
 //exports.basicAuth = this.authenticateUser;

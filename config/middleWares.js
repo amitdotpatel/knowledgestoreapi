@@ -4,7 +4,8 @@
 * */
 
 var path = require('path'),
-    passport = require('passport');
+    passport = require('passport'),
+    flash = require('connect-flash');;
 
 
 module.exports = function(app, config, express){
@@ -19,6 +20,7 @@ module.exports = function(app, config, express){
     app.use(express.session({ secret: '' + Math.random() * 10000 }));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(flash());
 
     //router comes last
     app.use(app.router);

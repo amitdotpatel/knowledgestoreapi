@@ -21,9 +21,8 @@ var app_user = {};
 /**
  *  fb login
  */
-exports.fbLogin = function(req, res){
-    console.log('handle fblogin');
-    passport.fbLogin(['email'])(req, res);
+exports.fbLogin = function(req, res, next){
+    passport.fbLogin(['email'])(req, res, next);
 }
 
 exports.fbLoginCallback = function(req, res, next){
@@ -36,8 +35,12 @@ exports.fbLoginCallback = function(req, res, next){
  */
 
 exports.logout = function (req, res) {
-  //req.logout();
+  req.logout();
   res.send('logged out successfully');
+}
+
+exports.login = function(req, res, next){
+    return passport.login()(req, res, next);
 }
 
 /*
@@ -215,11 +218,10 @@ exports.user = function (req, res, next, id) {
 //      next()
 //    })
      User.load(id, function(err, user){
-
       if (err) return next(err);
 
       if (!user) return next(new Error('Failed to load User ' + id));
-      console.log(user);
+      //console.log(user);
       req.profile = user;
       next()
 
