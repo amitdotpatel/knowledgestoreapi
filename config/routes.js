@@ -59,6 +59,13 @@ module.exports = function(app, express){
         res.redirect('http://localhost:8080/');
         //console.log(res);
     });
+    app.get('/user/current', function(req, res){
+        if(req.user){
+            res.send(200, req.user);
+        } else {
+            res.send(401, "Not authorized");
+        }
+    });
     app.post('/users/logIn', users.login, users.HandleSuccessfulLogin);
     app.post('/users/forgotPass', users.forgotPass);
     app.get('/logOut', authUser, users.logout);
