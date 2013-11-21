@@ -287,7 +287,8 @@ exports.activate = function(req, res){
       user.save(function(err, users, noOfUpdates){
           if (err) throw err;
           console.log('activated successfully');
-          res.send('activation successful');
+          //res.send('activation successful');
+          res.redirect(config.clientServerHost + config.clientServerPort + '#/activation');
       })
   }
 }

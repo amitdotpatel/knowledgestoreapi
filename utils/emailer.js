@@ -32,7 +32,7 @@ exports.sendEmail = function(user){
       render('authorizationEmail.html',
           {
               name:user.firstName,
-              link:config.serverURL + config.port + '/users/activate/' + user.activateCode
+              link:config.clientServerHost + config.clientServerPort + config.activationAPI + user.activateCode
           },
         function(err, resultHtml){
           if(err){

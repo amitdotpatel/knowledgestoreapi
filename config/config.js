@@ -7,6 +7,8 @@ module.exports = {
     development: {
       db: 'mongodb://localhost/kinoedu',
       port: process.env.PORT || 3000,
+      clientServerHost: 'http://localhost:',
+      clientServerPort: 8080,
       serverURL : 'http://172.25.30.29:' //TODO - need to check how to get this dynamically
       //TODO - implement this in db
       , SMTPTransportDetails: {
@@ -16,6 +18,7 @@ module.exports = {
               pass: "kinoedutest" ///use your account plz :)
           }
       },
+      activationAPI : '/api/users/activate/',
       ResultCode_success : 0,
       ResultCode_failure :1,
       FACEBOOK_APP_ID: '1380075888904256',
