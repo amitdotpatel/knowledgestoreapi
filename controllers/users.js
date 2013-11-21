@@ -21,8 +21,8 @@ var app_user = {};
 /**
  *  fb login
  */
-exports.fbLogin = function(req, res, next){
-    passport.fbLogin(['email'])(req, res, next);
+exports.fbLogin = function(req, res, next, redirectUrl){
+    passport.fbLogin(['email'], redirectUrl)(req, res, next);
 }
 
 exports.fbLoginCallback = function(req, res, next){
@@ -32,8 +32,8 @@ exports.fbLoginCallback = function(req, res, next){
 /**
  *  github login
  */
-exports.githubLogin = function(req, res, next){
-    passport.githubLogin(['user:email'])(req, res, next);
+exports.githubLogin = function(req, res, next, redirectUrl){
+    passport.githubLogin(['user:email'], redirectUrl)(req, res, next);
 }
 
 exports.githubLoginCallback = function(req, res, next){
@@ -43,9 +43,9 @@ exports.githubLoginCallback = function(req, res, next){
 /**
  *  google login
  */
-exports.googleLogin = function(req, res, next){
+exports.googleLogin = function(req, res, next, redirectUrl){
     passport.googleLogin(['https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'])(req, res, next);
+        'https://www.googleapis.com/auth/userinfo.email'], redirectUrl)(req, res, next);
 }
 
 exports.googleLoginCallback = function(req, res, next){

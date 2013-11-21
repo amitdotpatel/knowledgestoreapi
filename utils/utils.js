@@ -46,3 +46,15 @@ exports.getRandomPass = function(){
     }
     return randomString;
 }
+
+/**
+ * get the redirect url. if not specified, get the host from the request
+ */
+
+exports.getRedirectUrl = function(req){
+    var redirectUrl = req.query.redirectUrl;
+    if(!!!redirectUrl){
+        redirectUrl = req.connection.remoteAddress;
+    }
+    return redirectUrl;
+}

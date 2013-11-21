@@ -154,24 +154,24 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-module.exports.fbLogin = function (scope) {
-    return passport.authenticate('facebook', {scope: scope});
+module.exports.fbLogin = function (scope, state) {
+    return passport.authenticate('facebook', {scope: scope, state: state});
 }
 
 module.exports.fbLoginCallback = function () {
     return passport.authenticate('facebook');
 };
 
-module.exports.githubLogin = function (scope) {
-    return passport.authenticate('github', {scope: scope});
+module.exports.githubLogin = function (scope, state) {
+    return passport.authenticate('github', {scope: scope, state: state});
 }
 
 module.exports.githubLoginCallback = function () {
     return passport.authenticate('github');
 };
 
-module.exports.googleLogin = function (scope) {
-    return passport.authenticate('google', {scope: scope});
+module.exports.googleLogin = function (scope, state) {
+    return passport.authenticate('google', {scope: scope, state: state});
 }
 
 module.exports.googleLoginCallback = function () {
@@ -182,4 +182,4 @@ module.exports.login = function () {
     return passport.authenticate('local', {
         failureFlash: true
     });
-};
+}

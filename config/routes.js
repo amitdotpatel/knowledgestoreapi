@@ -5,7 +5,8 @@ var home = require('../controllers/home')
 
 
 module.exports = function(app, express){
-    var BasicAuth = require('../utils/authorization')(express);
+    var BasicAuth = require('../utils/authorization')(express),
+    utils = require('../utils/utils');
     var authUser = BasicAuth.authUser;
 
     //home APIs
@@ -14,49 +15,62 @@ module.exports = function(app, express){
     //user APIs
     //login with facebook
     app.get('/users/fbLogIn', function(req, res, next){
+        var redirectUrl = utils.getRedirectUrl(req);
         if(req.user){
-            res.redirect('http://localhost:8080/');
-            //res.send(200, "Already logged in");
+            res.redirect(redirectUrl);
         } else {
-            users.fbLogin(req, res, next);
+            users.fbLogin(req, res, next, redirectUrl);
         }
     });
     app.get('/users/fbLogIn/callback', users.fbLoginCallback, function(req, res){
+        var state = req.query.state;
+        if(!!!state){
+            state = req.connection.remoteAddress;
+        }
         //redirect this to callback url provided, default would be the standard kinoedu URL
-        //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(state);
         //console.log(res);
     });
 
     //login with github
     app.get('/users/githubLogIn', function(req, res, next){
+        var redirectUrl = utils.getRedirectUrl(req);
         if(req.user){
-            res.redirect('http://localhost:8080/');
+            res.redirect(redirectUrl);
             //res.send(200, "Already logged in");
         } else {
-            users.githubLogin(req, res, next);
+            users.githubLogin(req, res, next, redirectUrl);
         }
     });
     app.get('/users/githubLogin/callback', users.githubLoginCallback, function(req, res){
+        var state = req.query.state;
+        console.log('github state = ' + state);
+        if(!!!state){
+            state = req.connection.remoteAddress;
+        }
         //redirect this to callback url provided, default would be the standard kinoedu URL
-        //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(state);
         //console.log(res);
     });
 
     //login with google
     app.get('/users/googleLogIn', function(req, res, next){
+        var redirectUrl = utils.getRedirectUrl(req);
         if(req.user){
-            res.redirect('http://localhost:8080/');
+            res.redirect(redirectUrl);
             //res.send(200, "Already logged in");
         } else {
-            users.googleLogin(req, res, next);
+            users.googleLogin(req, res, next, redirectUrl);
         }
     });
     app.get('/users/googleLogin/callback', users.googleLoginCallback, function(req, res){
+        var state = req.query.state;
+        if(!!!state){
+            state = req.connection.remoteAddress;
+        }
+        console.log('google callback state = ' + req.query.state);
         //redirect this to callback url provided, default would be the standard kinoedu URL
-        //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(req.query.state);
         //console.log(res);
     });
     app.get('/user/current', function(req, res){
