@@ -14,12 +14,7 @@ module.exports = function(app, express){
     //user APIs
     //login with facebook
     app.get('/users/fbLogIn', function(req, res, next){
-        if(req.user){
-            res.redirect('http://localhost:8080/');
-            //res.send(200, "Already logged in");
-        } else {
-            users.fbLogin(req, res, next);
-        }
+        users.fbLogin(req, res, next);
     });
     app.get('/users/fbLogIn/callback', users.fbLoginCallback, function(req, res){
         //redirect this to callback url provided, default would be the standard kinoedu URL
@@ -46,12 +41,7 @@ module.exports = function(app, express){
 
     //login with google
     app.get('/users/googleLogIn', function(req, res, next){
-        if(req.user){
-            res.redirect('http://localhost:8080/');
-            //res.send(200, "Already logged in");
-        } else {
-            users.googleLogin(req, res, next);
-        }
+        users.googleLogin(req, res, next);
     });
     app.get('/users/googleLogin/callback', users.googleLoginCallback, function(req, res){
         //redirect this to callback url provided, default would be the standard kinoedu URL
