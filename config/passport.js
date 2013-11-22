@@ -99,6 +99,8 @@ passport.use(new GitHubStrategy({
         callbackURL: "http://localhost:3000/users/githubLogin/callback"
     },
     function(accessToken, refreshToken, profile, done) {
+        //TODO: email is not available in the profile.
+//      //https://github.com/jaredhanson/passport-github/issues/15
         //console.log(profile);
         //currently saving just the login, actual user details not available in profile.
         User.findOne({ 'github.id': profile.id }, function (err, user) {
@@ -108,10 +110,10 @@ passport.use(new GitHubStrategy({
             //if user is not present, create a new user
             if (!user) {
                 user = new User({
-                    name: profile.login
-                    , email: profile.login
-                    , firstName: profile.login
-                    , lastName : profile.login
+                    name: profile.username
+                    , email: 'n/a'
+                    , firstName: profile.username
+                    , lastName : 'n/a'
                     , provider: 'github'
                     , github: {
                         'id':profile.id
