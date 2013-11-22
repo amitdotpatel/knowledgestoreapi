@@ -1,6 +1,7 @@
 var home = require('../controllers/home')
     , courses = require('../controllers/courses')
     , users = require('../controllers/users')
+    , config = require('../config/config');
     ;
 
 
@@ -19,14 +20,14 @@ module.exports = function(app, express){
     app.get('/users/fbLogIn/callback', users.fbLoginCallback, function(req, res){
         //redirect this to callback url provided, default would be the standard kinoedu URL
         //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(config.development.clientServerHost + ':' + config.development.clientServerPort + '/');
         //console.log(res);
     });
 
     //login with github
     app.get('/users/githubLogIn', function(req, res, next){
         if(req.user){
-            res.redirect('http://localhost:8080/');
+            res.redirect(config.development.clientServerHost + ':' + config.development.clientServerPort + '/');
             //res.send(200, "Already logged in");
         } else {
             users.githubLogin(req, res, next);
@@ -35,7 +36,7 @@ module.exports = function(app, express){
     app.get('/users/githubLogin/callback', users.githubLoginCallback, function(req, res){
         //redirect this to callback url provided, default would be the standard kinoedu URL
         //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(config.development.clientServerHost + ':' + config.development.clientServerPort + '/');
         //console.log(res);
     });
 
@@ -46,7 +47,7 @@ module.exports = function(app, express){
     app.get('/users/googleLogin/callback', users.googleLoginCallback, function(req, res){
         //redirect this to callback url provided, default would be the standard kinoedu URL
         //currently assuming the default to be localhost:8080
-        res.redirect('http://localhost:8080/');
+        res.redirect(config.development.clientServerHost + ':' + config.development.clientServerPort + '/');
         //console.log(res);
     });
     app.get('/user/current', function(req, res){
