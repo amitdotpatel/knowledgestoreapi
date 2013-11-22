@@ -135,40 +135,59 @@ exports.changePass = function(req, res){
  */
 
 exports.create = function (req, res) {
-  var user = new User(req.body);
-  //initiate the user, NOTE - we will overwrite these values as those should be set for new user.
-  user.active = false;
-  user.provider = 'local';
-  user.disabled = false;
-  if(req.user){
-      user.createdBy = req.user._id;
-  }
+    var profile = req.body;
+    var query = {email: profile.email, active: true};
+    User.findOne(query, function(err, user){
+        if(err){
+            res.send(500, "Error while signup");
+        } else {
+            if(user){
+                if(user.provider == 'local' || user.password){
+                    res.send(400, "User already present");
+                } else {
+                    user.password = profile.password;
+                    user.save(function(err, user){
+                        if(err){
+                            res.send(500, "Some error while updating user");
+                        } else {
+                            res.send(200, "User updated successfully.");
+                        }
+                    });
+                }
+            } else {
+                var user = new User(req.body);
+                //initiate the user, NOTE - we will overwrite these values as those should be set for new user.
+                user.active = false;
+                user.provider = 'local';
+                user.disabled = false;
+                if(req.user){
+                    user.createdBy = req.user._id;
+                }
 
+                if ((user.hashed_password.length > 0) && (!user.password)){
+                    user.password = user.hashed_password;
+                }
 
-  if ((user.hashed_password.length > 0) && (!user.password)){
-    user.password = user.hashed_password;
-  }
+                /*
+                 * TODO - with below approach activatecode and _id differs only by 1 digit
+                 * need to make it random
+                 * */
 
-  /*
-  * TODO - with below approach activatecode and _id differs only by 1 digit
-  * need to make it random
-  * */
+                user.activateCode = new mongoose.Types.ObjectId;
+                user.save(function (err) {
+                    if (err) {
+                        res.send(400, err);
+                    }
+                    else{
 
-  user.activateCode = new mongoose.Types.ObjectId;
-  user.save(function (err) {
-    if (err) {
-        res.send(400, err);
-    }
-    else{
+                        res.send('created successfully');
+                        emailer.sendEmail(user);
 
-        res.send('created successfully');
-        emailer.sendEmail(user);
-
-    /*
-    * NOTE - above code is just creating user without verifying the email
-    * if we need to validate the email and take action if email is not proper
-    * implement below code
-    * */
+                        /*
+                         * NOTE - above code is just creating user without verifying the email
+                         * if we need to validate the email and take action if email is not proper
+                         * implement below code
+                         * */
 
 //        emailer.sendEmail(user, function(err, ResultCode){
 //            if(err){
@@ -182,8 +201,11 @@ exports.create = function (req, res) {
 //            }
 //        });
 
-    }
-  })
+                    }
+                })
+            }
+        }
+    });
 }
 
 /*
@@ -288,7 +310,7 @@ exports.activate = function(req, res){
           if (err) throw err;
           console.log('activated successfully');
           //res.send('activation successful');
-          res.redirect(config.clientServerHost + config.clientServerPort + '#/activation');
+          res.redirect(config.clientServerHost + ':' + config.clientServerPort + '#/activation');
       })
   }
 }

@@ -76,18 +76,15 @@ passport.use(new FacebookStrategy({
             } else {
                 //update the user information with facebook account details
                 if(!user.facebook){
-                    try{
-                        user.facebook = {
-                            id: profile.id
-                        };
-                        if(!user.active){
-                            user.active = true;
-                        }
-                        user.save();
-                        return done(null, user);
-                    } catch (e) {
-                        return done(e, user);
+                    user.facebook = {
+                        id: profile.id
+                    };
+                    if(!user.active){
+                        user.active = true;
                     }
+                    user.save(function(err, user){
+                        return done(err, user);
+                    });
                 }
                 return done(null, user);
             }
@@ -166,18 +163,15 @@ passport.use(new GoogleStrategy({
                 })
             } else {
                 if(!user.google){
-                    try{
-                        user.google = {
-                            id: profile.id
-                        }
-                        if(!user.active){
-                            user.active = true;
-                        }
-                        user.save();
-                        return done(null, user);
-                    } catch(e){
-                        return done(e, null);
+                    user.google = {
+                        id: profile.id
                     }
+                    if(!user.active){
+                        user.active = true;
+                    }
+                    user.save(function(err, user){
+                        return done(err, user);
+                    });
                 }
                 return done(null, user);
             }

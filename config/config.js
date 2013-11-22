@@ -7,7 +7,7 @@ module.exports = {
     development: {
       db: 'mongodb://localhost/kinoedu',
       port: process.env.PORT || 3000,
-      clientServerHost: 'http://localhost:',
+      clientServerHost: 'http://localhost',
       clientServerPort: 8080,
       serverURL : 'http://172.25.30.29:' //TODO - need to check how to get this dynamically
       //TODO - implement this in db
