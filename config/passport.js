@@ -49,7 +49,8 @@ passport.use(new FacebookStrategy({
         callbackURL: 'http://localhost:' + config.development.port + '/users/fbLogIn/callback'
     },
     function(accessToken, refreshToken, profile, done) {
-        User.findOne({ 'facebook.id': profile.id }, function (err, user) {
+        var query = { email: profile.emails[0].value};
+        User.findOne(query, function (err, user) {
             if (err) {
                 return done(err);
             }
@@ -64,6 +65,7 @@ passport.use(new FacebookStrategy({
                     , facebook: {
                         'id':profile.id
                     }
+                    , active: true
                 });
                 user.save(function (err, user) {
                     if (err) {
@@ -72,9 +74,21 @@ passport.use(new FacebookStrategy({
                     return done(err, user);
                 })
             } else {
-                return done(err, user);
+                //update the user information with facebook account details
+                if(!user.facebook){
+                    user.facebook = {
+                        id: profile.id
+                    };
+                    if(!user.active){
+                        user.active = true;
+                    }
+                    user.save(function(err, user){
+                        return done(err, user);
+                    });
+                }
+                return done(null, user);
             }
-        })
+        });
     }
 ));
 
@@ -85,6 +99,8 @@ passport.use(new GitHubStrategy({
         callbackURL: "http://localhost:3000/users/githubLogin/callback"
     },
     function(accessToken, refreshToken, profile, done) {
+        //TODO: email is not available in the profile.
+//      //https://github.com/jaredhanson/passport-github/issues/15
         //console.log(profile);
         //currently saving just the login, actual user details not available in profile.
         User.findOne({ 'github.id': profile.id }, function (err, user) {
@@ -94,10 +110,10 @@ passport.use(new GitHubStrategy({
             //if user is not present, create a new user
             if (!user) {
                 user = new User({
-                    name: profile.login
-                    , email: profile.login
-                    , firstName: profile.login
-                    , lastName : profile.login
+                    name: profile.username
+                    , email: 'n/a'
+                    , firstName: profile.username
+                    , lastName : 'n/a'
                     , provider: 'github'
                     , github: {
                         'id':profile.id
@@ -123,9 +139,8 @@ passport.use(new GoogleStrategy({
         callbackURL: "http://localhost:3000/users/googleLogin/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log(profile);
-        //currently saving just the login, actual user details not available in profile.
-        User.findOne({ 'google.id': profile.id }, function (err, user) {
+        var query = { email: profile.emails[0].value, active: true };
+        User.findOne(query, function (err, user) {
             if (err) {
                 return done(err);
             }
@@ -140,6 +155,7 @@ passport.use(new GoogleStrategy({
                     , google: {
                         'id':profile.id
                     }
+                    , active: true
                 });
                 user.save(function (err, user) {
                     if (err) {
@@ -148,7 +164,18 @@ passport.use(new GoogleStrategy({
                     return done(err, user);
                 })
             } else {
-                return done(err, user);
+                if(!user.google){
+                    user.google = {
+                        id: profile.id
+                    }
+                    if(!user.active){
+                        user.active = true;
+                    }
+                    user.save(function(err, user){
+                        return done(err, user);
+                    });
+                }
+                return done(null, user);
             }
         })
     }
