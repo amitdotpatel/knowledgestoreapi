@@ -91,7 +91,7 @@ exports.userCourses = function (req, res){
 exports.create = function (req, res) {
   var course = new Courses(req.body)
   course.user = req.user;
-  course.createdAt = Date.now;
+  course.createdAt = Date.now();
 
   /* TODO - need to check req body before uploading */
 
